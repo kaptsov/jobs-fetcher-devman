@@ -2,6 +2,7 @@ import requests
 import os
 from dotenv import load_dotenv
 from terminaltables import AsciiTable
+from itertools import count
 
 
 def predict_salary(salary_from, salary_to):
@@ -35,11 +36,9 @@ def predict_rub_salary_hh(vacancy):
 def get_headhunter_vacancy(language):
 
     average_salary = 0
-    page = 0
-    pages_amount = 1
     per_page = 100
 
-    while page < pages_amount:
+    for page in count(0, 1):
         vacancy_search_field = {
             'text': f'программист {language}',
             'area': 1,
@@ -60,7 +59,9 @@ def get_headhunter_vacancy(language):
         for vacancy in response_json['items']:
             if vacancy['salary'] and predict_rub_salary_hh(vacancy):
                 average_salary += predict_rub_salary_hh(vacancy)
-        page += 1
+        if page > pages_amount:
+            break
+
     if vacancies_found > 2000:
         vacancies_processed = pages_amount * per_page
     else:
@@ -73,39 +74,38 @@ def get_headhunter_vacancy(language):
 
 def get_superjob_vacancy(language, superjob_token):
 
-    count = 100
+    page_count = 100
 
     headers = {
         'X-Api-App-Id': superjob_token,
     }
 
     average_salary = 0
-    page = 0
-    pages_amount = 1
 
-    while page < pages_amount:
+    for page in count(0, 1):
 
         params = {
             'keywords': f'Программист {language}',
             'town': 'Москва',
             'no_agreement': 1,
             'payment_from': 70000,
-            'count': count
+            'count': page_count
         }
         response = requests.get(f'https://api.superjob.ru/2.2/vacancies/',
                                 headers=headers, params=params)
         response.raise_for_status()
         response_json = response.json()
         vacancies_found = int(response_json['total'])
-        pages_amount = int(vacancies_found / count + 1)
+        pages_amount = int(vacancies_found / page_count + 1)
 
         for vacancy in response.json()['objects']:
             if predict_rub_salary_sj(vacancy):
                 average_salary += predict_rub_salary_sj(vacancy)
-        page += 1
+        if page > pages_amount:
+            break
 
     if vacancies_found > 2000:
-        vacancies_processed = pages_amount * count
+        vacancies_processed = pages_amount * page_count
     else:
         vacancies_processed = vacancies_found
 
