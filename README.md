@@ -6,7 +6,7 @@
 
 Python3 должен быть уже установлен. Затем используйте `pip` (или `pip3`, есть конфликт с Python2) для установки зависимостей.
 
-`pip install -r requirements.txt`
+```pip install -r requirements.txt```
 
 ## Файл конфигурации
 
@@ -23,7 +23,7 @@ LANGUAGE_COLLECTION='python, C++, JavaScript, Java, Ruby, PHP, C#'
 
 ## Пример использования
 
-`python main.py`
+```python main.py```
 
 ## Цель проекта
 Код написан в образовательных целях на онлайн-курсе для веб-разработчиков [Dvmn.org](https://dvmn.org/modules/).
@@ -36,7 +36,7 @@ Analysis of the salaries in RUB of programmers in Moscow depending on the progra
 
 Python3 should already be installed. Then use `pip` (or `pip3`, there is a conflict with Python2) to install the dependencies.
 
-`pip install -r requirements.txt`
+```pip install -r requirements.txt```
 
 ## Configuration file
 
@@ -53,7 +53,7 @@ How to get a token from the superjob site API is described [link](https://api.su
 
 ## Usage example
 
-`python main.py`
+```python main.py```
 
 ## Objective of the project
 The code was written for educational purposes in the online course for web developers [Dvmn.org](https://dvmn.org/modules/).
