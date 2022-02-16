@@ -9,9 +9,8 @@ def predict_salary(salary_from, salary_to):
 
     if not salary_from and salary_to:
         return salary_to * 0.8
-    elif not salary_to and salary_from:
+    elif salary_from and not salary_to:
         return salary_from * 1.2
-
     return (salary_from + salary_to) / 2
 
 
@@ -52,11 +51,11 @@ def get_headhunter_vacancy(language):
         response = requests.get('https://api.hh.ru/vacancies',
                                 params=vacancy_search_field)
         response.raise_for_status()
-        response_json = response.json()
-        pages_amount = response_json['pages']
-        vacancies_found = int(response_json['found'])
+        collected_data = response.json()
+        pages_amount = collected_data['pages']
+        vacancies_found = int(collected_data['found'])
 
-        for vacancy in response_json['items']:
+        for vacancy in collected_data['items']:
             if vacancy['salary'] and predict_rub_salary_hh(vacancy):
                 average_salary += predict_rub_salary_hh(vacancy)
         if page > pages_amount:
@@ -94,11 +93,11 @@ def get_superjob_vacancy(language, superjob_token):
         response = requests.get(f'https://api.superjob.ru/2.2/vacancies/',
                                 headers=headers, params=params)
         response.raise_for_status()
-        response_json = response.json()
-        vacancies_found = int(response_json['total'])
+        collected_data = response.json()
+        vacancies_found = int(collected_data['total'])
         pages_amount = int(vacancies_found / page_count + 1)
 
-        for vacancy in response.json()['objects']:
+        for vacancy in collected_data['objects']:
             if predict_rub_salary_sj(vacancy):
                 average_salary += predict_rub_salary_sj(vacancy)
         if page > pages_amount:
@@ -139,7 +138,7 @@ if __name__ == '__main__':
     language_salaries_hh = {}
     language_salaries_sj = {}
 
-    print('Выполняется поиск... Может занять около нескольких минут...')
+    print('Запрос данных может занять несколько минут...')
     for language in lang_collection:
         language_salaries_hh[language] = get_headhunter_vacancy(language)
         language_salaries_sj[language] = get_superjob_vacancy(
